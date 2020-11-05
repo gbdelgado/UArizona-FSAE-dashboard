@@ -1,14 +1,11 @@
 const SerialPort = require('serialport');
 const Readline = require('@serialport/parser-readline');
-const port = new SerialPort('/dev/cu.usbmodem141101', { baudRate: 9600 });
+
+
+const PORT = 'COM3' //COM3 for windows, /dev/something mac, /dev/tty linux
+
+const port = new SerialPort(PORT, { baudRate: 9600 });
 const parser = port.pipe(new Readline({ delimiter: '\n' }));
-// Read the port data
-port.on("open", () => {
-  console.log('serial port open');
-});
-parser.on('data', data =>{
-  console.log('got word from arduino:', data);
-});
 
 //elements
 const tach = document.getElementById('rpm');
@@ -18,6 +15,10 @@ const warning = document.getElementById('warning');
 const canvas = document.querySelector('canvas');
 const c = canvas.getContext('2d');
 
+// Read the port data
+port.on("open", () => {
+  console.log('serial port open');
+});
 
 //mapping function
 const mapValue = (x, in_min, in_max, out_min, out_max) =>{
@@ -38,8 +39,12 @@ const fillTach = (rpm) => {
 
 parser.on('data', (msg)=>{
 
+    //msg object will read the most recent line from the serial port
+    //TODO: create JSON object with CAN ID's and messages and update the object
+    //      values below
     console.log(msg);
     return;
+
 
     //grab the data from the packet
     const currGear = msg.m_carTelemetryData[0].m_gear;
@@ -63,5 +68,3 @@ parser.on('data', (msg)=>{
     //fill the revbar
     fillTach(mappedRpm);
 })
-
-client.start();
