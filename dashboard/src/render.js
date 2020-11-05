@@ -1,7 +1,14 @@
-const { F1TelemetryClient, constants } = require('f1-telemetry-client');
-const { PACKETS } = constants;
-
-const client = new F1TelemetryClient({ port: 20777, bigintEnabled: true });
+const SerialPort = require('serialport');
+const Readline = require('@serialport/parser-readline');
+const port = new SerialPort('/dev/cu.usbmodem141101', { baudRate: 9600 });
+const parser = port.pipe(new Readline({ delimiter: '\n' }));
+// Read the port data
+port.on("open", () => {
+  console.log('serial port open');
+});
+parser.on('data', data =>{
+  console.log('got word from arduino:', data);
+});
 
 //elements
 const tach = document.getElementById('rpm');
@@ -29,17 +36,10 @@ const fillTach = (rpm) => {
     c.fillRect(0,0, canvas.width, rpm * canvas.height);
 }
 
-client.on(PACKETS.carStatus, (msg)=>{
+parser.on('data', (msg)=>{
+
     console.log(msg);
-    if(msg.m_carStatusData[0].m_frontLeftWingDamage || msg.m_carStatusData[0].m_frontLeftWingDamage){
-        warning.innerHTML = "Wing Damage";
-        warning.style.display = "block";
-        warning.style.color = "red";
-    }
-})
-
-client.on(PACKETS.carTelemetry, (msg)=>{
-
+    return;
 
     //grab the data from the packet
     const currGear = msg.m_carTelemetryData[0].m_gear;
