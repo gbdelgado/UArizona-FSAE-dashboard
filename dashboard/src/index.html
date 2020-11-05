@@ -20,26 +20,37 @@
 </head>
 
 <body>
-    <div class="container centered" id="App">
-        <div class="row justify-content-start">
-            <div class="col">
-                <h1 id="speed" class="display-4 text-left" style="color: whitesmoke">0</h1>
-                <label for="speed">KMH</label>
+    <div class="container-fluid centered" id="App" style="display: flex;">
+        <div class="container" style="width: 10%; margin-left: 0;">
+            <canvas style="border: 1px solid white; ">
+            </canvas>
+        </div>
+
+        <div class="container" style="flex-grow: 1;">
+            <div class="row justify-content-start">
+                <div class="col">
+                    <h1 id="speed" class="display-4 text-left" style="color: whitesmoke">0</h1>
+                    <label for="speed">KMH</label>
+                </div>
+                <div class="col">
+                    <h1 id="rpm" class="display-4 text-right" style="color: whitesmoke">0000
+                    </h1>
+                    <label for="rpm" style="position: absolute; right: 10%;">RPM</label>
+                </div>
             </div>
-            <div class="col">
-                <h1 id="rpm" class="display-4 text-right" style="color: whitesmoke">0000
+            <div class="row justify-content-center">
+                <div class="col-6">
+                    <h1 id="gear" class="display-3 text-center" style="color: whitesmoke">
+                        N
+                    </h1>
+                </div>
+            </div>
+            <div class="row align-items-end">
+                <h1 id="warning" class="display-2 text-center" style="display: none;">
+                    
                 </h1>
-                <label for="rpm">RPM</label>
             </div>
         </div>
-        <div class="row justify-content-center">
-            <div class="col-6">
-                <h1 id="gear" class="display-3 text-center" style="color: whitesmoke">
-                    N
-                </h1>
-            </div>
-        </div>
-        <div class="row align-items-end"></div>
     </div>
 </body>
 
