@@ -7,6 +7,7 @@ const client = new F1TelemetryClient({ port: 20777, bigintEnabled: true });
 const tach = document.getElementById('rpm');
 const speedo = document.getElementById('speed');
 const gear = document.getElementById('gear');
+const warning = document.getElementById('warning');
 const canvas = document.querySelector('canvas');
 const c = canvas.getContext('2d');
 
@@ -20,22 +21,26 @@ const mapValue = (x, in_min, in_max, out_min, out_max) =>{
 const fillTach = (rpm) => {
     //clear the current filled rectangle
     c.clearRect(0,0,  canvas.width, canvas.height);
+
     //pick the color
-    if(rpm < .25){
-        c.fillStyle = '#DEEDCF';
-    } else if(rpm > .25 && rpm < .50){
-        c.fillStyle = '#56B870';
-    } else if(rpm > .50 && rpm < .75){
-        c.fillStyle= '#1D9A6C';
-    } else {
-        c.fillStyle = '#0E4D64';
-    }
+    c.fillStyle = (rpm < .75) ? '#4DD502' : '#990409';
     
     //draw the rectangle
     c.fillRect(0,0, canvas.width, rpm * canvas.height);
 }
 
+client.on(PACKETS.carStatus, (msg)=>{
+    console.log(msg);
+    if(msg.m_carStatusData[0].m_frontLeftWingDamage || msg.m_carStatusData[0].m_frontLeftWingDamage){
+        warning.innerHTML = "Wing Damage";
+        warning.style.display = "block";
+        warning.style.color = "red";
+    }
+})
+
 client.on(PACKETS.carTelemetry, (msg)=>{
+
+
     //grab the data from the packet
     const currGear = msg.m_carTelemetryData[0].m_gear;
     const speed = msg.m_carTelemetryData[0].m_speed;
