@@ -52,8 +52,7 @@
     "f1-telemetry-client": "^0.1.18",
     "jquery": "^3.5.1",
     "popper.js": "^1.16.1",
-    "serialport": "^9.0.2",
-    "spi-device": "^3.1.0"
+    "serialport": "^9.0.2"
   },
   "devDependencies": {
     "@electron-forge/cli": "^6.0.0-beta.54",
