@@ -42,14 +42,19 @@ parser.on('data', (msg)=>{
     //msg object will read the most recent line from the serial port
     //TODO: create JSON object with CAN ID's and messages and update the object
     //      values below
-    console.log(msg);
+    console.log(typeof msg);
+
+    let num = msg.split(/(\s+)/)[16];
+
+    tach.innerHTML = num;
+
     return;
 
 
     //grab the data from the packet
+    const rpm = msg.m_carTelemetryData[0].m_engineRPM;
     const currGear = msg.m_carTelemetryData[0].m_gear;
     const speed = msg.m_carTelemetryData[0].m_speed;
-    const rpm = msg.m_carTelemetryData[0].m_engineRPM;
     const mappedRpm = mapValue(rpm, 0, 13500, 0, 1);
 
     // 0 = Netrual and -1 is Reverse
