@@ -1,0 +1,10 @@
+[Unit]
+Description=Dashboard Service
+After=multi-user.target
+
+[Service]
+Type=idle
+ExecStart=/home/pi/start.sh
+
+[Install]
+WantedBy=multi-user.target
