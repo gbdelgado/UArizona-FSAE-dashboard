@@ -16,8 +16,12 @@ const createWindow = () => {
     height: 600,
     webPreferences: {
         nodeIntegration: true,
-    }
+    },
+    frame: false
   });
+
+  //set full screen
+  mainWindow.setFullScreen(true);
 
   // and load the index.html of the app.   
   mainWindow.loadFile(path.join(__dirname, 'index.html'));
