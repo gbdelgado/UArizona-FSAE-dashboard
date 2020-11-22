@@ -1,16 +1,42 @@
 const SerialPort = require('serialport');
 const Readline = require('@serialport/parser-readline');
-const {sendWarning} = require('./render');
+const {sendWarning, cancelWarning} = require('./render');
 
-const PORT = 'COM3' //COM3 for windows, /dev/something mac, /dev/tty linux
+//defining base constants
+const PORT = "COM3";
+const BAUDRATE = 9600;
 
-const port = new SerialPort(PORT, { baudRate: 9600 }, (e)=>{
-    //error callback
-    if(e instanceof Error){
-        sendWarning(e.message);
-    }
-});
+//inital connect to can
+const port = new SerialPort(PORT, {autoOpen: false, baudRate: BAUDRATE });
 const parser = port.pipe(new Readline({ delimiter: '\n' }));
+
+//Base Functions
+const connectToCan = ()=>{
+    port.open((e)=>{
+        //if there is no error
+        if(!e){
+            return;
+        }
+
+        console.error("Disconnected from CAN, trying again in 1s");
+        setTimeout(connectToCan(), 1000)
+    })
+}
+
+
+/**
+ * 
+ * @param {*} x 
+ * @param {*} in_min 
+ * @param {*} in_max 
+ * @param {*} out_min 
+ * @param {*} out_max 
+ */
+const mapValue = (x, in_min, in_max, out_min, out_max) =>{
+    return ((x-in_min) * (out_max - out_min) / (in_max - in_min) + out_min).toFixed(2);
+}
+
+
 
 // Read the port data
 port.on("open", () => {
@@ -19,11 +45,11 @@ port.on("open", () => {
     cancelWarning()  
 });  
 
+port.on('close', (err)=>{
+    sendWarning("Can't connect to CAN BUS, trying again");
+    connectToCan();
+});
 
-//mapping function
-const mapValue = (x, in_min, in_max, out_min, out_max) =>{
-    return ((x-in_min) * (out_max - out_min) / (in_max - in_min) + out_min).toFixed(2);
-}
 
 
 parser.on('data', (msg)=>{
@@ -62,3 +88,8 @@ parser.on('data', (msg)=>{
     //fill the revbar
     fillTach(mappedRpm);
 })
+
+
+//open the port manually
+connectToCan();
+
