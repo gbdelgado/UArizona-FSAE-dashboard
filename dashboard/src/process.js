@@ -1,6 +1,6 @@
 const SerialPort = require('serialport');
 const Readline = require('@serialport/parser-readline');
-const {sendWarning, cancelWarning} = require('./render');
+const {sendWarning, cancelWarning, fillTach} = require('./render');
 
 //defining base constants
 const PORT = "COM3";
@@ -24,20 +24,6 @@ const connectToCan = ()=>{
 }
 
 
-/**
- * 
- * @param {*} x 
- * @param {*} in_min 
- * @param {*} in_max 
- * @param {*} out_min 
- * @param {*} out_max 
- */
-const mapValue = (x, in_min, in_max, out_min, out_max) =>{
-    return ((x-in_min) * (out_max - out_min) / (in_max - in_min) + out_min).toFixed(2);
-}
-
-
-
 // Read the port data
 port.on("open", () => {
     console.log('serial port open');
@@ -57,11 +43,7 @@ parser.on('data', (msg)=>{
     //msg object will read the most recent line from the serial port
     //TODO: create JSON object with CAN ID's and messages and update the object
     //      values below
-    console.log(typeof msg);
-
-    let num = msg.split(/(\s+)/)[16];
-
-    tach.innerHTML = num;
+    fillTach(parseInt(msg));
 
     return;
 

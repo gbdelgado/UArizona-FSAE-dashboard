@@ -17,10 +17,19 @@
         require("bootstrap");
     </script>
     <script defer src="render.js"></script>
+    <script defer src="process.js"></script>
 </head>
 
-<body>
-    <div class="container-fluid centered" id="App" style="">
+<body id="body">
+    <!--Warning Messages, display: none by default-->
+    <div id="warning" class="jumbotron jumbotron-fluid centered" style="display: none;">
+        <div class="container">
+            <h1 id="warningMessage" class="display-4 text-center" style="color: black;"></h1>
+          </div>
+    </div>
+
+    <!--Main APP-->
+    <div class="container-fluid centered" id="App">
         <div class="row">
             <div class="col-3">
                 <div class="container" style="width: 100%; margin-left: 0;">
@@ -29,7 +38,7 @@
                 </div>
             </div>
             <div class="col-8">
-                <div class="container" style="">
+                <div class="container">
                     <div class="row justify-content-start">
                         <div class="col">
                             <h1 id="speed" class="display-4 text-left" style="color: whitesmoke">0</h1>
@@ -47,11 +56,6 @@
                                 N
                             </h1>
                         </div>
-                    </div>
-                    <div class="row align-items-end">
-                        <h1 id="warning" class="display-2 text-center" style="display: none;">
-
-                        </h1>
                     </div>
                 </div>
             </div>

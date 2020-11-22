@@ -14,22 +14,40 @@ const gear = document.getElementById('gear');
 const canvas = document.querySelector('canvas');
 const c = canvas.getContext('2d');
 
+/**
+ * 
+ * @param {*} x 
+ * @param {*} in_min 
+ * @param {*} in_max 
+ * @param {*} out_min 
+ * @param {*} out_max 
+ */
+const mapValue = (x, in_min, in_max, out_min, out_max) =>{
+    return ((x-in_min) * (out_max - out_min) / (in_max - in_min) + out_min).toFixed(2);
+}
+
 
 module.exports = {
     /**
-     * @param rpm {float} -- a float representing the percent of how much the
-     *                       rev bar should be filled
+     * @param rpm {int} -- an int representing the current rpm
      */
     fillTach: (rpm)=>{
+        //first fill the number tach
+        tach.innerHTML = rpm;
+
+        //get the mapped value
+        let percent = mapValue(rpm, 0, 2000, 0, 1);
+
         //clear the current filled rectangle
         c.clearRect(0,0,  canvas.width, canvas.height);
     
         //pick the color
-        c.fillStyle = (rpm < .75) ? '#4DD502' : '#990409';
+        c.fillStyle = (percent < .75) ? '#4DD502' : '#990409';
     
         //draw the rectangle
-        c.fillRect(0,0, canvas.width, rpm * canvas.height);
+        c.fillRect(0,0, canvas.width, percent * canvas.height);
     },
+
 
     /**
      * Blocks the application to display a warning message
