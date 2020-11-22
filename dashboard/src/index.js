@@ -17,7 +17,7 @@ const createWindow = () => {
     webPreferences: {
         nodeIntegration: true,
     },
-    frame: true
+    frame: false
   });
 
   //set full screen
