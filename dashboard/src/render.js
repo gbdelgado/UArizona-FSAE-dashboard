@@ -1,75 +1,59 @@
-const SerialPort = require('serialport');
-const Readline = require('@serialport/parser-readline');
-
-
-const PORT = 'COM3' //COM3 for windows, /dev/something mac, /dev/tty linux
-
-const port = new SerialPort(PORT, { baudRate: 9600 });
-const parser = port.pipe(new Readline({ delimiter: '\n' }));
+/**
+ * Handles all DOM changes and renders, answers calls from process.js
+ */
 
 //elements
+const body = document.getElementById("body");
+const app = document.getElementById("App");
+const warning = document.getElementById("warning");
+
+
 const tach = document.getElementById('rpm');
 const speedo = document.getElementById('speed');
 const gear = document.getElementById('gear');
-const warning = document.getElementById('warning');
 const canvas = document.querySelector('canvas');
 const c = canvas.getContext('2d');
 
-// Read the port data
-port.on("open", () => {
-  console.log('serial port open');
-});
 
-//mapping function
-const mapValue = (x, in_min, in_max, out_min, out_max) =>{
-    return ((x-in_min) * (out_max - out_min) / (in_max - in_min) + out_min).toFixed(2);
-}
-
-//tachometer function
-const fillTach = (rpm) => {
-    //clear the current filled rectangle
-    c.clearRect(0,0,  canvas.width, canvas.height);
-
-    //pick the color
-    c.fillStyle = (rpm < .75) ? '#4DD502' : '#990409';
+module.exports = {
+    /**
+     * @param rpm {float} -- a float representing the percent of how much the
+     *                       rev bar should be filled
+     */
+    fillTach: (rpm)=>{
+        //clear the current filled rectangle
+        c.clearRect(0,0,  canvas.width, canvas.height);
     
-    //draw the rectangle
-    c.fillRect(0,0, canvas.width, rpm * canvas.height);
-}
+        //pick the color
+        c.fillStyle = (rpm < .75) ? '#4DD502' : '#990409';
+    
+        //draw the rectangle
+        c.fillRect(0,0, canvas.width, rpm * canvas.height);
+    },
 
-parser.on('data', (msg)=>{
+    /**
+     * Blocks the application to display a warning message
+     * @param msg {String} -- a string representing the message
+     */
+    sendWarning: (msg)=>{
+        //change the background to white
+        body.style.backgroundColor= "white";
+        //disable the app
+        app.style.display = "none";
+        //enable the warning message
+        warning.style.display = "block";
+        //change the message
+        document.getElementById("warningMessage").innerHTML = msg;
+    },
 
-    //msg object will read the most recent line from the serial port
-    //TODO: create JSON object with CAN ID's and messages and update the object
-    //      values below
-    console.log(typeof msg);
-
-    let num = msg.split(/(\s+)/)[16];
-
-    tach.innerHTML = num;
-
-    return;
-
-
-    //grab the data from the packet
-    const rpm = msg.m_carTelemetryData[0].m_engineRPM;
-    const currGear = msg.m_carTelemetryData[0].m_gear;
-    const speed = msg.m_carTelemetryData[0].m_speed;
-    const mappedRpm = mapValue(rpm, 0, 13500, 0, 1);
-
-    // 0 = Netrual and -1 is Reverse
-    if(currGear == 0){
-        gear.innerHTML = "N";
-    } else if (currGear == -1){
-        gear.innerHTML = "R"
-    } else {
-        gear.innerHTML = currGear;
+    cancelWarning: ()=>{
+        //change the background back to black
+        body.style.backgroundColor = "black";
+        //disable the warning
+        warning.style.display = "none";
+        //enable the app
+        app.style.display = "block";
     }
 
-    //fill the speed and tach
-    speedo.innerHTML = speed;
-    tach.innerHTML = rpm;
-
-    //fill the revbar
-    fillTach(mappedRpm);
-})
+    
+}
