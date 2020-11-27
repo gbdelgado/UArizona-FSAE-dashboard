@@ -10,7 +10,7 @@ const warning = document.getElementById("warning");
 
 const tach = document.getElementById('rpm');
 const speedo = document.getElementById('speed');
-const gear = document.getElementById('gear');
+const gearElem = document.getElementById('gear');
 const canvas = document.querySelector('canvas');
 const c = canvas.getContext('2d');
 
@@ -36,18 +36,40 @@ module.exports = {
         tach.innerHTML = rpm;
 
         //get the mapped value
-        let percent = mapValue(rpm, 0, 2000, 0, 1);
+        let percent = mapValue(rpm, 0, 13000, 0, 1);
 
         //clear the current filled rectangle
         c.clearRect(0,0,  canvas.width, canvas.height);
     
         //pick the color
-        c.fillStyle = (percent < .75) ? '#4DD502' : '#990409';
+        c.fillStyle = (percent < .85) ? '#4DD502' : '#990409';
     
         //draw the rectangle
         c.fillRect(0,0, canvas.width, percent * canvas.height);
     },
 
+    fillSpeedo: (speed)=>{
+        speedo.innerHTML = speed;
+    },
+
+    /**
+     * Takes in a string representing a gear and will decide if the current
+     * gear is in neutral or reverse and then fill the dom element with the
+     * correct gear
+     * @param gear {String} -- a string representing the current gear
+     */
+    fillGear: (gear)=>{
+        //check for Neutral and Reverse
+        switch(gear){
+            case "-1":
+                gear = "R";
+                break;
+            case "0":
+                gear = "N";
+                break;
+        }
+        gearElem.innerHTML = gear;
+    },
 
     /**
      * Blocks the application to display a warning message
