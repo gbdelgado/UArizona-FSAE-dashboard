@@ -19,7 +19,8 @@ const connectToCan = ()=>{
         }
 
         console.error("Disconnected from CAN, trying again in 1s");
-        setTimeout(connectToCan(), 1000)
+        sendWarning("Can't connect to CAN");
+        setTimeout(()=>{connectToCan()}, 2000);  
     })
 }
 
@@ -28,7 +29,8 @@ const connectToCan = ()=>{
 port.on("open", () => {
     console.log('serial port open');
     //cancel any warning if there was any
-    cancelWarning()  
+    cancelWarning()
+    port.resume();  
 });  
 
 port.on('close', (err)=>{
