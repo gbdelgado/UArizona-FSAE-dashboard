@@ -41,8 +41,10 @@ module.exports = {
         //clear the current filled rectangle
         c.clearRect(0,0,  canvas.width, canvas.height);
     
-        //pick the color
+        //pick the color for revbar
         c.fillStyle = (percent < .85) ? '#4DD502' : '#990409';
+        //also for the gear
+        gearElem.style.color = c.fillStyle;
     
         //draw the rectangle
         c.fillRect(0,0, canvas.width, percent * canvas.height);
